@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from app import app
 
 client = TestClient(app)
-
+print("Helooooo")
 # Test route get_version
 def test_get_version():
     response = client.get("/get_version")
