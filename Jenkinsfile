@@ -39,6 +39,7 @@ pipeline {
             steps {
                 script {
                     // Chạy các test case với pytest
+                    export PYTHONPATH=$(pwd)
                     sh 'bash -c "source mloptest/bin/activate && pytest tests/test_prime.py"'  // Chạy test case sau khi cài đặt môi trường
                 }
             }
