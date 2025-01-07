@@ -57,5 +57,6 @@ pipeline {
         failure {
             echo 'Build or Test Failed!'  // Nếu build hoặc test thất bại
         }
+            echo 'Vinh'
     }
 }
