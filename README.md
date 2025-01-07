@@ -1,3 +1,4 @@
 # mlops
 # Assignmet for Machine learnign operations
-# Memory
+# Nguyễn Quốc Vinh
+Vinh
