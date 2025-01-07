@@ -47,22 +47,16 @@ pipeline {
                 }
             }
         }
+
     }
     
     post {
         success {
-            script {
-                // Gửi trạng thái "success" đến GitHub Checks
-                githubCheckNotify context: 'CI/CD', status: 'SUCCESS', detailsURL: env.BUILD_URL, description: 'Build and tests passed successfully.'
-            }
             echo 'Build and Test Successful!'  // Nếu build và test thành công
         }
         failure {
-            script {
-                // Gửi trạng thái "failure" đến GitHub Checks
-                githubCheckNotify context: 'CI/CD', status: 'FAILURE', detailsURL: env.BUILD_URL, description: 'Build or tests failed.'
-            }
             echo 'Build or Test Failed!'  // Nếu build hoặc test thất bại
         }
+
     }
 }
