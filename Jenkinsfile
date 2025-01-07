@@ -10,7 +10,7 @@ pipeline {
         stage('Start Pipeline') {
             steps {
                 withChecks('Start Pipeline') {
-                    publishChecks name: 'Start Pipeline', status: 'IN_PROGRESS', summary: 'Pipeline execution has started.'
+                    publishChecks name: 'Start Pipeline', status: 'COMPLETED', summary: 'Pipeline execution has started.'
                 }
             }
         }
@@ -104,7 +104,7 @@ pipeline {
     post {
         always {
             withChecks('Pipeline Completion') {
-                publishChecks name: 'Pipeline Completion', status: 'COMPLETED', conclusion: 'NEUTRAL',
+                publishChecks name: 'Pipeline Completion', status: 'COMPLETED', conclusion: 'SUCCESS',
                              summary: 'Pipeline execution completed.'
             }
         }
