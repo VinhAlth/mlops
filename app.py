@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 app = FastAPI()
-
+print("123")
 @app.get("/get_version")
 def get_version():
     return {"version": "1.0.0"}
