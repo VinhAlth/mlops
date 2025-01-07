@@ -83,7 +83,7 @@ pipeline {
                         sh '''#!/bin/bash
                         source mloptest/bin/activate
                         export PYTHONPATH=$(pwd)
-                        pytest tests/test_prime.py --junitxml=test-results.xml
+                        pytest tests/test_prime.py --junitxml=test-results.xml --verbose
                         '''
                         withChecks('Run Tests') {
                             publishChecks name: 'Run Tests', status: 'COMPLETED', conclusion: 'SUCCESS',
