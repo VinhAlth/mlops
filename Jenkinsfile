@@ -38,11 +38,9 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Đảm bảo môi trường ảo được kích hoạt
-                    sh 'source mloptest/bin/activate'
-        
-                    // Thiết lập PYTHONPATH và chạy các test case với pytest
-                    sh '''
+                    // Sử dụng bash để vào môi trường và chạy các lệnh
+                    sh '''#!/bin/bash
+                        source mloptest/bin/activate
                         export PYTHONPATH=$(pwd)
                         pytest tests/test_prime.py
                     '''
