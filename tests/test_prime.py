@@ -10,18 +10,18 @@ def test_get_version():
     assert response.status_code == 200
     assert response.json() == {"version": "1.0.0"}
 
-# Test route check_prime
+# Test route check_prime with new test cases
 @pytest.mark.parametrize("number, expected", [
-    (2, True),
-    (3, True),
-    (4, False),
-    (5, True),
-    (9, False),
-    (10, False),
-    (11, True),
-    (15, False),
-    (17, True),
-    (18, False),
+    (-1, False),  # Số âm không phải số nguyên tố
+    (0, False),   # Số 0 không phải số nguyên tố
+    (1, False),   # Số 1 không phải số nguyên tố
+    (19, True),   # Số nguyên tố lẻ lớn hơn
+    (23, True),   # Số nguyên tố lẻ lớn hơn
+    (25, False),  # Số lẻ không phải số nguyên tố (bị chia hết bởi 5)
+    (29, True),   # Số nguyên tố lớn
+    (31, True),   # Số nguyên tố lớn
+    (100, False), # Số chẵn lớn
+    (101, True),  # Số nguyên tố lẻ lớn
 ])
 def test_check_prime(number, expected):
     response = client.get(f"/check_prime/{number}")
