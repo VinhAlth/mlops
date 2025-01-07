@@ -80,7 +80,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh '''
+                        sh '''#!/bin/bash
                         source mloptest/bin/activate
                         export PYTHONPATH=$(pwd)
                         pytest tests/test_prime.py --junitxml=test-results.xml
