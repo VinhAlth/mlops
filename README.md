@@ -1,4 +1,4 @@
 # mlops
-# Assignmet for Machine learnign operations
+# Assignmet for Machine learning operations
 # Nguyễn Quốc Vinh
 Vinh
