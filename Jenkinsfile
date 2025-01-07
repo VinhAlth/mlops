@@ -1,62 +1,112 @@
 pipeline {
     agent any
-    
+
     environment {
         REPO_URL = 'https://github.com/VinhAlth/mlops.git'  // URL repository của bạn
         BRANCH = 'main'  // Nhánh 'main' thay vì 'master'
     }
-    
+
     stages {
+        stage('Start Pipeline') {
+            steps {
+                withChecks('Start Pipeline') {
+                    publishChecks name: 'Start Pipeline', status: 'IN_PROGRESS', summary: 'Pipeline execution has started.'
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 script {
-                    // Clone repository từ GitHub
-                    git url: "${REPO_URL}", branch: "${BRANCH}"
+                    try {
+                        git url: "${REPO_URL}", branch: "${BRANCH}"
+                        withChecks('Checkout Repository') {
+                            publishChecks name: 'Checkout Repository', status: 'COMPLETED', conclusion: 'SUCCESS',
+                                         summary: 'Repository checked out successfully.'
+                        }
+                    } catch (e) {
+                        withChecks('Checkout Repository') {
+                            publishChecks name: 'Checkout Repository', status: 'COMPLETED', conclusion: 'FAILURE',
+                                         summary: 'Failed to check out repository.'
+                        }
+                        throw e
+                    }
                 }
             }
         }
-        
+
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Tạo môi trường ảo với tên mloptest và cài đặt dependencies
-                    sh 'python3 -m venv mloptest'  // Đặt tên môi trường ảo là 'mloptest'
-                    sh 'bash -c "source mloptest/bin/activate && pip install -r requirements.txt"'  // Kích hoạt môi trường và cài đặt thư viện
+                    try {
+                        sh 'python3 -m venv mloptest'
+                        sh 'bash -c "source mloptest/bin/activate && pip install -r requirements.txt"'
+                        withChecks('Install Dependencies') {
+                            publishChecks name: 'Install Dependencies', status: 'COMPLETED', conclusion: 'SUCCESS',
+                                         summary: 'Dependencies installed successfully.'
+                        }
+                    } catch (e) {
+                        withChecks('Install Dependencies') {
+                            publishChecks name: 'Install Dependencies', status: 'COMPLETED', conclusion: 'FAILURE',
+                                         summary: 'Failed to install dependencies.'
+                        }
+                        throw e
+                    }
                 }
             }
         }
-        
+
         stage('Run Application') {
             steps {
                 script {
-                    // Chạy ứng dụng FastAPI trên cổng 8000
-                    sh 'bash -c "source mloptest/bin/activate && uvicorn app:app --host 0.0.0.0 --port 8000 &"'
+                    try {
+                        sh 'bash -c "source mloptest/bin/activate && uvicorn app:app --host 0.0.0.0 --port 8000 &"'
+                        withChecks('Run Application') {
+                            publishChecks name: 'Run Application', status: 'COMPLETED', conclusion: 'SUCCESS',
+                                         summary: 'FastAPI application is running successfully.'
+                        }
+                    } catch (e) {
+                        withChecks('Run Application') {
+                            publishChecks name: 'Run Application', status: 'COMPLETED', conclusion: 'FAILURE',
+                                         summary: 'Failed to run FastAPI application.'
+                        }
+                        throw e
+                    }
                 }
             }
         }
-        
+
         stage('Test') {
             steps {
                 script {
-                    // Sử dụng bash để vào môi trường và chạy các lệnh
-                    sh '''#!/bin/bash
+                    try {
+                        sh '''
                         source mloptest/bin/activate
                         export PYTHONPATH=$(pwd)
-                        pytest tests/test_prime.py
-                    '''
+                        pytest tests/test_prime.py --junitxml=test-results.xml
+                        '''
+                        withChecks('Run Tests') {
+                            publishChecks name: 'Run Tests', status: 'COMPLETED', conclusion: 'SUCCESS',
+                                         summary: 'All tests passed successfully.'
+                        }
+                    } catch (e) {
+                        withChecks('Run Tests') {
+                            publishChecks name: 'Run Tests', status: 'COMPLETED', conclusion: 'FAILURE',
+                                         summary: 'Some tests failed.'
+                        }
+                        throw e
+                    }
                 }
             }
         }
-
     }
-    
-    post {
-        success {
-            echo 'Build and Test Successful!'  // Nếu build và test thành công
-        }
-        failure {
-            echo 'Build or Test Failed!'  // Nếu build hoặc test thất bại
-        }
 
+    post {
+        always {
+            withChecks('Pipeline Completion') {
+                publishChecks name: 'Pipeline Completion', status: 'COMPLETED', conclusion: 'NEUTRAL',
+                             summary: 'Pipeline execution completed.'
+            }
+        }
     }
 }
